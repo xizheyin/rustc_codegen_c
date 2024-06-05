@@ -45,6 +45,7 @@ impl CargoProject {
         }
     }
 
+    #[allow(unused)]
     pub(crate) fn source_dir(&self) -> PathBuf {
         self.project_dirs.get_source_dir()
     }
@@ -93,6 +94,7 @@ impl CargoProject {
         cmd
     }
 
+    #[allow(unused)]
     pub(crate) fn clean(&self) {
         let _ = self.project_dirs.clean_all();
     }
@@ -102,6 +104,7 @@ impl CargoProject {
         self.build_cmd("build", compiler)
     }
 
+    #[allow(unused)]
     /// cargo run with specified arguments
     pub(crate) fn run(&self, compiler: &CompileToolChain) -> Command {
         self.build_cmd("run", compiler)

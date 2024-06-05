@@ -21,6 +21,7 @@ pub(crate) fn get_host_triple(rustc: &Path) -> String {
         .to_owned()
 }
 
+#[allow(unused)]
 pub(crate) fn get_toolchain_name() -> String {
     let active_toolchain = Command::new("rustup")
         .stderr(Stdio::inherit())
@@ -63,6 +64,7 @@ pub(crate) fn get_rustc_path() -> PathBuf {
     Path::new(String::from_utf8(rustc_path).unwrap().trim()).to_owned()
 }
 
+#[allow(unused)]
 pub(crate) fn get_rustdoc_path() -> PathBuf {
     if let Ok(rustdoc) = std::env::var("RUSTDOC") {
         return PathBuf::from(rustdoc);
@@ -76,6 +78,7 @@ pub(crate) fn get_rustdoc_path() -> PathBuf {
     Path::new(String::from_utf8(rustc_path).unwrap().trim()).to_owned()
 }
 
+#[allow(unused)]
 pub(crate) fn get_default_sysroot(rustc: &Path) -> PathBuf {
     let default_sysroot = Command::new(rustc)
         .stderr(Stdio::inherit())
@@ -105,6 +108,6 @@ pub(crate) fn get_file_name(rustc: &Path, crate_name: &str, crate_type: &str) ->
     let file_name = String::from_utf8(file_name).unwrap().trim().to_owned();
     assert!(!file_name.contains('\n'));
     assert!(file_name.contains(crate_name));
-    println!("file_name: {}", file_name);
+    //println!("file_name: {}", file_name);
     file_name
 }

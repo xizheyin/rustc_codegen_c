@@ -7,13 +7,14 @@ use super::project::{rustflags_from_env, rustflags_to_cmd_env};
 use std::env;
 use std::path::PathBuf;
 
+/// build rgenc dylib
 pub fn build_backend(
     dirs: ProjectDirs,
     release: bool,
     compile_toolchain: CompileToolChain,
     use_unstable_features: bool,
 ) -> PathBuf {
-    let cg_c_proj: CargoProject = CargoProject::new(dirs, "cg_c");
+    let cg_c_proj: CargoProject = CargoProject::new(dirs.clone(), "cg_c");
 
     let mut cmd = cg_c_proj.build(&compile_toolchain);
 
@@ -40,7 +41,7 @@ pub fn build_backend(
 
     rustflags_to_cmd_env(&mut cmd, "RUSTFLAGS", &rustflags);
 
-    eprintln!("[BUILD] rustc_codegen_cranelift");
+    eprintln!("[BUILD] rgenc.so");
     super::cmd_utils::spawn_and_wait(cmd);
 
     cg_c_proj

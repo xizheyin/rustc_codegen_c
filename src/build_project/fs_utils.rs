@@ -1,5 +1,5 @@
 use std::{
-    fs::{create_dir_all, remove_dir_all},
+    fs::{self, create_dir_all, remove_dir_all},
     path::PathBuf,
 };
 
@@ -16,7 +16,8 @@ impl ProjectDirs {
         build_dir: PathBuf,
         dist_dir: PathBuf,
     ) -> Self {
-        create_dir_all(source_dir.clone()).unwrap();
+        assert!(matches!(is_dir_empty(&source_dir), Ok(false)));
+
         create_dir_all(build_dir.clone()).unwrap();
         create_dir_all(dist_dir.clone()).unwrap();
         Self {
@@ -31,7 +32,7 @@ impl ProjectDirs {
     }
 
     pub(crate) fn get_manifest_dir(&self) -> PathBuf {
-        self.source_dir.join("Cargo.toml")
+        self.get_source_dir().join("Cargo.toml")
     }
 
     pub(crate) fn get_build_dir(&self) -> PathBuf {
@@ -39,7 +40,12 @@ impl ProjectDirs {
     }
 
     pub(crate) fn clean_all(&self) -> std::io::Result<()> {
-        remove_dir_all(self.build_dir.clone())?;
+        remove_dir_all(self.get_build_dir().clone())?;
         remove_dir_all(self.dist_dir.clone())
     }
+}
+
+fn is_dir_empty(dir: &PathBuf) -> Result<bool, std::io::Error> {
+    let mut entries = fs::read_dir(dir)?;
+    Ok(entries.next().is_none())
 }
