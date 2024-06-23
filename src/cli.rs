@@ -17,13 +17,13 @@ pub struct Cli {
 #[derive(StructOpt, Debug)]
 
 enum SubCommand {
-    Build(Build),
+    Boot(Boot),
     Clean,
 }
 
 /// Build rgenc
 #[derive(StructOpt, Debug)]
-struct Build {
+struct Boot {
     /// Activate release mode
     #[structopt(long)]
     release: bool,
@@ -44,10 +44,10 @@ impl Cli {
         let compile_toolchain = CompileToolChain::default();
 
         match cli.subcmd {
-            SubCommand::Build(build) => {
+            SubCommand::Boot(boot) => {
                 let _backend = build_project::build_backend(
                     backend_dirs,
-                    build.release,
+                    boot.release,
                     compile_toolchain,
                     use_unstable_features,
                 );
