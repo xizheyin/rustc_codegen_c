@@ -8,6 +8,9 @@ name = "rgenc"
 crate-type = ["dylib"]
 
 [dependencies]
+itertools = "0.13"
+rust2cast = { path = "../rust2cast" }
+
 
 [package.metadata.rust-analyzer]
 rustc_private = true

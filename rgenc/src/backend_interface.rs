@@ -1,15 +1,4 @@
-extern crate rustc_codegen_ssa;
-extern crate rustc_data_structures;
-extern crate rustc_driver;
-extern crate rustc_errors;
-extern crate rustc_hir;
-extern crate rustc_metadata;
-extern crate rustc_middle;
-extern crate rustc_session;
-extern crate rustc_span;
-extern crate rustc_symbol_mangling;
-extern crate rustc_target;
-
+use itertools::Itertools;
 use rustc_codegen_ssa::traits::CodegenBackend;
 use rustc_codegen_ssa::{CodegenResults, CrateInfo};
 use rustc_data_structures::fx::FxIndexMap;
@@ -19,9 +8,25 @@ use rustc_middle::dep_graph::{WorkProduct, WorkProductId};
 use rustc_middle::ty::TyCtxt;
 use rustc_session::config::OutputFilenames;
 use rustc_session::Session;
+use stable_mir::mir::mono::{Instance, MonoItem};
 use std::any::Any;
 
+use crate::context::ToCContext;
 pub struct CBackend;
+
+impl CBackend {
+    fn codegen_items(&self, tcx: TyCtxt, items: Vec<MonoItem>) {
+        let mut cctx = ToCContext::new(tcx);
+
+        for item in &items {
+            match item {
+                MonoItem::Fn(instance) => cctx.codegen_function(*instance),
+                MonoItem::Static(static_def) => todo!(),
+                MonoItem::GlobalAsm(_) => {}
+            }
+        }
+    }
+}
 
 impl CodegenBackend for CBackend {
     fn locale_resource(&self) -> &'static str {
@@ -34,6 +39,16 @@ impl CodegenBackend for CBackend {
         metadata: EncodedMetadata,
         _need_metadata_module: bool,
     ) -> Box<dyn Any> {
+        let mut cctx = ToCContext::new(tcx);
+
+        let (_, cgus) = tcx.collect_and_partition_mono_items(());
+
+        for cgu in cgus {
+            for (item, _) in cgu.items() {
+                cctx.codegen_item(item);
+            }
+        }
+
         Box::new(CodegenResults {
             modules: vec![],
             allocator_module: None,

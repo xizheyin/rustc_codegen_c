@@ -7,7 +7,7 @@ edition = "2021"
 
 
 [workspace]
-members = ["rgenc"]
+members = ["rgenc", "rust2cast"]
 
 [dependencies]
 structopt = "0.3"
