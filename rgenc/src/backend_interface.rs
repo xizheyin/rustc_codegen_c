@@ -8,25 +8,12 @@ use rustc_middle::dep_graph::{WorkProduct, WorkProductId};
 use rustc_middle::ty::TyCtxt;
 use rustc_session::config::OutputFilenames;
 use rustc_session::Session;
+use rustc_smir::rustc_internal;
 use stable_mir::mir::mono::{Instance, MonoItem};
 use std::any::Any;
 
 use crate::context::ToCContext;
 pub struct CBackend;
-
-impl CBackend {
-    fn codegen_items(&self, tcx: TyCtxt, items: Vec<MonoItem>) {
-        let mut cctx = ToCContext::new(tcx);
-
-        for item in &items {
-            match item {
-                MonoItem::Fn(instance) => cctx.codegen_function(*instance),
-                MonoItem::Static(static_def) => todo!(),
-                MonoItem::GlobalAsm(_) => {}
-            }
-        }
-    }
-}
 
 impl CodegenBackend for CBackend {
     fn locale_resource(&self) -> &'static str {
@@ -45,7 +32,7 @@ impl CodegenBackend for CBackend {
 
         for cgu in cgus {
             for (item, _) in cgu.items() {
-                cctx.codegen_item(item);
+                cctx.codegen_item(&item);
             }
         }
 
