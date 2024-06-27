@@ -17,7 +17,10 @@ pub enum CStatement {
     Break,
     Continue,
     Goto(String),
-    Label(String, Box<CStatement>),
+    Label(String),
     Block(Vec<CStatement>),
     Expression(CExpr),
+
+    /// temp
+    NopStmt,
 }

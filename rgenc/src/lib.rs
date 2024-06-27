@@ -17,6 +17,7 @@ extern crate rustc_session;
 extern crate rustc_smir;
 extern crate rustc_span;
 extern crate rustc_target;
+extern crate rustc_type_ir;
 extern crate stable_mir;
 
 mod backend_interface;

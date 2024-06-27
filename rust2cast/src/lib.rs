@@ -8,6 +8,7 @@ mod ty;
 pub use decl::CDeclaration;
 pub use expr::CExpr;
 pub use func::CFunction;
+pub use stmt::CStatement;
 pub use ty::{CEnum, CStruct, CType, CUnion};
 
 #[derive(Debug, PartialEq, Eq, Clone, Default)]

@@ -1,7 +1,7 @@
-fn add(a: i32, b: i32) -> i32 {
-    a + b
+fn myself(a: i32) -> i32 {
+    a
 }
 
 fn main() {
-    add(1, 2);
+    myself(1);
 }

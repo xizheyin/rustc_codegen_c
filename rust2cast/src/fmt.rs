@@ -24,6 +24,9 @@ impl CType {
                     .collect::<Vec<String>>()
                     .join(", ")
             ),
+            CType::Bool => "bool".to_string(),
+            CType::Nop => "NO SUPPORT".to_string(),
+            CType::Isize => "isize".to_string(),
         }
     }
 }
@@ -51,6 +54,7 @@ impl CExpr {
             }
             CExpr::Cast(ctype, expr) => format!("({}){}", ctype.to_c_code(), expr.to_c_code()),
             CExpr::Sizeof(ctype) => format!("sizeof({})", ctype.to_c_code()),
+            CExpr::Nop => "UNSUPPORT".to_string(),
         }
     }
 }
@@ -111,7 +115,12 @@ impl CEnum {
 
 impl CStatement {
     fn to_c_code(&self) -> String {
-        match self {
+        let mut res = String::new();
+        if !matches!(self, CStatement::Label(_)) {
+            res += "    ";
+        }
+
+        res += &match self {
             CStatement::Declaration(decl) => format!("{};", decl.to_c_code()),
             CStatement::Assignment(expr1, expr2) => {
                 format!("{} = {};", expr1.to_c_code(), expr2.to_c_code())
@@ -166,15 +175,19 @@ impl CStatement {
             CStatement::Break => "break;".to_string(),
             CStatement::Continue => "continue;".to_string(),
             CStatement::Goto(label) => format!("goto {};", label),
-            CStatement::Label(label, stmt) => format!("{}: {}", label, stmt.to_c_code()),
+            CStatement::Label(label) => format!("{}:", label),
             CStatement::Block(block) => format!("{{\n{}\n}}", block_to_c_code(block)),
             CStatement::Expression(expr) => format!("{};", expr.to_c_code()),
-        }
+            CStatement::NopStmt => {
+                format!("")
+            }
+        };
+        res
     }
 }
 
 impl CFunction {
-    fn to_c_code(&self) -> String {
+    pub fn to_c_code(&self) -> String {
         let params_code = self
             .parameters
             .iter()

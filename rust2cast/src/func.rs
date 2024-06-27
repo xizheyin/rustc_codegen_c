@@ -5,5 +5,6 @@ pub struct CFunction {
     pub return_type: CType,
     pub name: String,
     pub parameters: Vec<CDeclaration>,
+    pub local_variables: Vec<CDeclaration>,
     pub body: Vec<CStatement>,
 }

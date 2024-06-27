@@ -11,4 +11,5 @@ pub enum CExpr {
     ArrayAccess(Box<CExpr>, Box<CExpr>),
     Cast(Box<CType>, Box<CExpr>),
     Sizeof(Box<CType>),
+    Nop,
 }

@@ -18,13 +18,13 @@ impl<'tcx> ToCContext<'tcx> {
     pub(crate) fn codegen_item(&mut self, item: &MonoItem<'tcx>) {
         match item {
             MonoItem::Fn(instance) => {
-                // println!("fn name: {}", item.symbol_name(self.tcx));
-                // println!(
-                //     "fn unmangled name: {}",
-                //     //with_forced_trimmed_paths
-                //     with_no_trimmed_paths!(self.tcx.def_path_str(instance.def_id()))
-                // );
-                let _ = self.codegen_function(*instance);
+                let item_mangled_name = item.symbol_name(self.tcx).to_string();
+                let _item_unmangled_name =
+                    with_no_trimmed_paths!(self.tcx.def_path_str(instance.def_id()));
+                println!("fn name: {}", item_mangled_name);
+                //println!("fn name: {}", item_unmangled_name);
+
+                let _ = self.codegen_function(*instance, item_mangled_name);
             }
             MonoItem::Static(static_def) => todo!(),
             MonoItem::GlobalAsm(asm) => {
@@ -47,5 +47,24 @@ fn get_mono_item_name<'tcx>(tcx: TyCtxt<'tcx>, mono_item: &MonoItem<'tcx>) -> Op
             Some(tcx.def_path_str(*def_id))
         }
         MonoItem::GlobalAsm(_) => None,
+    }
+}
+
+/// Escapes the name of a function
+pub fn function_name(name: rustc_middle::ty::SymbolName) -> String {
+    let mut name: String = name.to_string();
+
+    if name.len() > 1000 {
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::{Hash, Hasher};
+        //TODO: make hashes consitant!
+        fn calculate_hash<T: Hash>(t: &T) -> u64 {
+            let mut s = DefaultHasher::new();
+            t.hash(&mut s);
+            s.finish()
+        }
+        format!("{}_{}", &name[..1000], calculate_hash(&name)).into()
+    } else {
+        name.into()
     }
 }

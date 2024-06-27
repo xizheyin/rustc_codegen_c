@@ -2,7 +2,9 @@ use crate::decl::CDeclaration;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum CType {
+    Bool,
     Int,
+    Isize,
     Float,
     Double,
     Char,
@@ -13,6 +15,7 @@ pub enum CType {
     Pointer(Box<CType>),
     Array(Box<CType>, usize),
     Function(Box<CType>, Vec<CType>),
+    Nop,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
